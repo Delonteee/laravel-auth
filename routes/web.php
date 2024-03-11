@@ -2,6 +2,10 @@
 
 use Illuminate\Support\Facades\Route;
 
+// Controllers
+use App\Http\Controllers\MainController;
+use App\Http\Controllers\Admin\MainController as AdminMainController;
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -13,41 +17,15 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () {
-    $firstName = 'Gino';
-    $lastName = 'Paoli';
+Route::get('/', [MainController::class, 'index'])->name('home');
 
-    /*
-        compact: crea un array associativo le cui chiavi sono le stringhe
-                 che mettiamo tra le parentesi, mentre i valori di tali
-                 chiavi sono i valori delle variabili con i nomi corrispondenti
-                 alle stringhe inserite
+Route::prefix('admin')
+    ->name('admin.')
+    ->middleware('auth')
+    ->group(function () {
 
-        compact('firstName', 'lastName')
-         |                                     |
-         V                                     V
+    Route::get('/dashboard', [AdminMainController::class, 'dashboard'])->name('dashboard');
 
-         [
-            'firstName' => $firstName,
-            'lastName' => $lastName,
-         ]
-    */
-
-    /*
-        dd: vuol dire dump and die, cioè fai il var_dump (più carino però)
-            e poi stoppa l'esecuzione
-    */
-    // dd(compact('firstName', 'lastName'));
-
-    return view('welcome', [
-        'firstName' => $firstName,
-        'lastName' => $lastName,
-    ]);
-    // return view('welcome', compact('firstName', 'lastName'));
 });
 
-Route::get('/chi-siamo', function () {
-    return view('subpages.about');
-});
-
-// Route::get(PERCORSO CON CUI ARRIVARE ALLA PAGINA, FUNZIONE DI CALLBACK CHE MI CREA LA RISPOSTA DA DARE ALL UTENTE)
+require __DIR__.'/auth.php';
